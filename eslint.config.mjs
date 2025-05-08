@@ -1,16 +1,15 @@
-import { defineConfig } from 'eslint-define-config';
+import { FlatCompat } from "@eslint/eslintrc";
 
-export default defineConfig({
-  extends: ['eslint:recommended'],
-  parserOptions: {
-    ecmaVersion: 2020,
-  },
-  env: {
-    browser: true,
-    node: true,
-  },
-  rules: {
-    'no-console': 'warn',
-  },
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
 });
+
+export default [
+  ...compat.config({
+    extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  }),
+];
 
