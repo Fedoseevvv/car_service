@@ -116,6 +116,20 @@ export default function Filters({
           />
         </div>
       )}
+      {/* Сортировка по цене */}
+<div className="border-b border-gray-200 py-6">
+  <span className="block font-medium text-gray-900 mb-2">
+    Сортировка по цене
+  </span>
+  <Select
+    placeholder="Выберите сортировку"
+    value={priceSortOptions.find((o) => o.value === currentSort)}
+    onChange={(v) => handleFilterChange("sort", v)}
+    options={priceSortOptions}
+    isSearchable={false}
+    isClearable
+  />
+</div>
     </section>
   );
 }
