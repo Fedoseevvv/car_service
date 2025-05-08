@@ -23,6 +23,7 @@ export default function Filters({
   carGeneration: string | null;
   brands: string[];
   models: string[] | null;
+  sortOrder: string | null;
   generations: string[] | null;
 }) {
   const searchParams = useSearchParams();
