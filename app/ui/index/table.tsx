@@ -1,12 +1,26 @@
-import { fetchPartsByGenerationName } from "@/app/lib/data";
+import fetchPartsByGenerationName  from "@/app/lib/dopolnenie";
+import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
 
-export default async function StorageTable({
-  carGeneration,
-}: {
+type Props = {
+  carModel?: string | null;
   carGeneration: string | null;
-}) {
-  const part = await fetchPartsByGenerationName(carGeneration);
+  sortOrder?: string | null;
+};
+
+export default async function StorageTable({
+  carModel,
+  carGeneration,
+  sortOrder,
+}: Props) {
+  // Логика: если задана сортировка — использовать новую функцию
+  const parts = sortOrder
+    ? await fetchParts({
+        modelId: carModel,
+        generationId: carGeneration,
+        sortOrder,
+      })
+    : await fetchPartsByGenerationName(carGeneration);
 
   return (
     <div className="mt-6 flow-root flex-1">
@@ -19,7 +33,7 @@ export default async function StorageTable({
                   Наименование товара
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Марка
+                  Статус
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Цена
@@ -27,7 +41,7 @@ export default async function StorageTable({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {part?.map((item) => (
+              {parts?.map((item: any) => (
                 <tr
                   key={item.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
