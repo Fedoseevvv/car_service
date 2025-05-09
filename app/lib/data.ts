@@ -2,7 +2,7 @@ import postgres from "postgres";
 
 const sql = postgres(process.env.POSTGRES_URL!);
 
-export async function fetchBrands() {
+export async function fetchBrands(): Promise<string[]> {
   try {
     const brands = await sql`
       SELECT name FROM car_brands
@@ -14,7 +14,7 @@ export async function fetchBrands() {
   }
 }
 
-export async function fetchModelsByBrand(brandName: string) {
+export async function fetchModelsByBrand(brandName: string): Promise<string[]> {
   try {
     const brandId = await sql`
       SELECT id FROM car_brands
@@ -34,10 +34,11 @@ export async function fetchModelsByBrand(brandName: string) {
 }
 
 // Получить поколения по модели
-export async function fetchGenerationsByModel(modelName: string | null) {
+export async function fetchGenerationsByModel(modelName: string | null): Promise<string[]> {
   try {
     if (!modelName) {
-      return await sql`SELECT * FROM car_generations`;
+      const generations = await sql`SELECT name FROM car_generations`;
+      return generations.map((g) => g.name);
     }
 
     const modelId = await sql`

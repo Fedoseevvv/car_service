@@ -11,12 +11,14 @@ export default async function Page(props: {
     model?: string;
     brand?: string;
     generations?: string;
+    sort?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const carBrand = searchParams?.brand || null;
   const carModel = searchParams?.model || null;
   const carGeneration = searchParams?.generations || null;
+  const sortOrder = searchParams?.sort || null;
 
   console.log(carGeneration);
 
@@ -27,14 +29,19 @@ export default async function Page(props: {
   return (
     <main className="flex flex-row p-6 gap-10">
       <StorageFilters
-        generations={generations}
+        generations={generations as string[] | null}
         carGeneration={carGeneration}
-        brands={brands}
-        models={models}
+        brands={brands as string[]}
+        models={models as string[] | null}
         carBrand={carBrand}
         carModel={carModel}
+        sortOrder={sortOrder}
       />
-      <StorageTable carGeneration={carGeneration} />
+      <StorageTable 
+        carGeneration={carGeneration}
+        carModel={carModel}
+        sortOrder={sortOrder}
+      />
     </main>
   );
 }
