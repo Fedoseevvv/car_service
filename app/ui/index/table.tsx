@@ -21,7 +21,7 @@ export default function StorageTable({ carGeneration, sortOrder }: StorageTableP
         setLoading(true);
         const fetchedParts = await fetchParts({ generationId: carGeneration, sortOrder });
         setParts(fetchedParts as Part[]);
-      } catch (err) {
+      } catch {
         setParts([]);
       } finally {
         setLoading(false);
@@ -97,4 +97,4 @@ export default function StorageTable({ carGeneration, sortOrder }: StorageTableP
       </table>
     </div>
   );
-}
+} 
