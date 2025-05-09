@@ -1,5 +1,6 @@
 import StorageTable from "./ui/index/table";
 import StorageFilters from "./ui/index/filters";
+import LogoutWrapper from "./ui/logout-wrapper";
 import {
   fetchBrands,
   fetchGenerationsByModel,
@@ -53,20 +54,23 @@ export default async function Page(props: {
   console.log('Fetched parts:', parts);
 
   return (
-    <main className="flex flex-row p-6 gap-10">
-      <StorageFilters
-        generations={generations}
-        carGeneration={carGeneration}
-        brands={brands}
-        models={models}
-        carBrand={carBrand}
-        carModel={carModel}
-        sortOrder={sortOrder}
-      />
-      <StorageTable 
-        carGeneration={carGeneration}
-        sortOrder={sortOrder}
-      />
+    <main className="flex flex-col p-6 gap-6">
+      <LogoutWrapper />
+      <div className="flex flex-row gap-10">
+        <StorageFilters
+          generations={generations}
+          carGeneration={carGeneration}
+          brands={brands}
+          models={models}
+          carBrand={carBrand}
+          carModel={carModel}
+          sortOrder={sortOrder}
+        />
+        <StorageTable 
+          carGeneration={carGeneration}
+          sortOrder={sortOrder}
+        />
+      </div>
     </main>
   );
 }

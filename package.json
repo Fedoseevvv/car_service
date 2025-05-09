@@ -12,6 +12,7 @@
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
+    "cookies-next": "^5.1.0",
     "drizzle-orm": "^0.43.1",
     "next": "^15.0.4",
     "next-auth": "5.0.0-beta.25",
