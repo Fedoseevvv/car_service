@@ -44,7 +44,7 @@ export async function fetchPartsByGenerationName(
     `;
 
     return relatedParts;
-  } catch (error) {
+  } catch {
     // В продакшене здесь можно добавить логирование в файл или сервис мониторинга
     throw new Error("Failed to fetch parts.");
   }
