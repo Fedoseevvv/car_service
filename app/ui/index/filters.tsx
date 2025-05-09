@@ -37,6 +37,16 @@ export default function Filters({
   const { replace } = useRouter();
   const currentSort = sortOrder;
 
+  console.log('Filters props:', {
+    carModel,
+    carBrand,
+    carGeneration,
+    brands,
+    models,
+    generations,
+    sortOrder
+  });
+
   const params = new URLSearchParams(searchParams.toString());
 
   const brandsOptions = brands.map((brand) => ({
@@ -48,6 +58,8 @@ export default function Filters({
     name: string,
     value: { value: string; label: string } | null
   ) => {
+    console.log('Filter change:', { name, value });
+
     if (!value) {
       params.delete(name);
     } else {
@@ -62,7 +74,9 @@ export default function Filters({
       params.delete(CAR_GENERATION_SEARCH_PARAM);
     }
 
-    replace(`${pathname}?${params.toString()}`);
+    const newUrl = `${pathname}?${params.toString()}`;
+    console.log('New URL:', newUrl);
+    replace(newUrl);
   };
 
   return (
@@ -123,20 +137,21 @@ export default function Filters({
           />
         </div>
       )}
+
       {/* Сортировка по цене */}
-<div className="border-b border-gray-200 py-6">
-  <span className="block font-medium text-gray-900 mb-2">
-    Сортировка по цене
-  </span>
-  <Select
-    placeholder="Выберите сортировку"
-    value={priceSortOptions.find((o) => o.value === currentSort)}
-    onChange={(v) => handleFilterChange("sort", v)}
-    options={priceSortOptions}
-    isSearchable={false}
-    isClearable
-  />
-</div>
+      <div className="border-b border-gray-200 py-6">
+        <span className="block font-medium text-gray-900 mb-2">
+          Сортировка по цене
+        </span>
+        <Select
+          placeholder="Выберите сортировку"
+          value={priceSortOptions.find((o) => o.value === currentSort)}
+          onChange={(v) => handleFilterChange("sort", v)}
+          options={priceSortOptions}
+          isSearchable={false}
+          isClearable
+        />
+      </div>
     </section>
   );
 }
