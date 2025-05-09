@@ -2,6 +2,7 @@ import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
 import { Metadata } from "next";
 import Header from "./ui/index/header";
+import { CartProvider } from "./lib/cart-context";
 
 export const metadata: Metadata = {
   title: {
@@ -19,12 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <div className="flex flex-col md:flex-row md:overflow-hidden">
-          <div className="w-full flex-none">
-            <Header />
+        <CartProvider>
+          <div className="flex flex-col md:flex-row md:overflow-hidden">
+            <div className="w-full flex-none">
+              <Header />
+            </div>
           </div>
-        </div>
-        {children}
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
