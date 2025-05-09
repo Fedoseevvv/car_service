@@ -6,26 +6,26 @@ import clsx from "clsx";
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: "О нас", href: "/" },
+  { name: "О нас", href: "/about" },
   {
     name: "Техническое обслуживание",
-    href: "/",
+    href: "/maintenance",
   },
   {
     name: "Ремонт автомобиля",
-    href: "/",
+    href: "/repair",
   },
   {
     name: "Диагностика автомобиля",
-    href: "/",
+    href: "/diagnostics",
   },
   {
     name: "Робомойка",
-    href: "/",
+    href: "/carwash",
   },
   {
     name: "Акции",
-    href: "/",
+    href: "/promotions",
   },
   {
     name: "Склад",
