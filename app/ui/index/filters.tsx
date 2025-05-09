@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -9,6 +9,12 @@ import {
   CAR_GENERATION_SEARCH_PARAM,
 } from "@/app/lib/constants";
 import { capitalize } from "@/app/lib/utils";
+import {
+  fetchBrands,
+  fetchGenerationsByModel,
+  fetchModelsByBrand,
+} from "@/app/lib/data";
+import type { Brand, Model, Generation } from '@/app/lib/types';
 
 const priceSortOptions = [
   { value: "asc", label: "По возрастанию" },

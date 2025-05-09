@@ -1,33 +1,27 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
-import { useEffect, useState } from 'react';
 import AddToCartButton from '../add-to-cart-button';
 import type { Part } from '@/app/lib/types';
 
-type Props = {
+interface StorageTableProps {
   carGeneration: string | null;
-  sortOrder?: string | null;
-};
+  sortOrder: string | null;
+}
 
-export default function StorageTable({
-  carGeneration,
-  sortOrder,
-}: Props) {
+export default function StorageTable({ carGeneration, sortOrder }: StorageTableProps) {
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadParts = async () => {
-      setLoading(true);
       try {
-        const fetchedParts = await fetchParts({
-          generationId: carGeneration,
-          sortOrder,
-        });
+        setLoading(true);
+        const fetchedParts = await fetchParts({ generationId: carGeneration, sortOrder });
         setParts(fetchedParts as Part[]);
-      } catch (error) {
+      } catch (err) {
         setParts([]);
       } finally {
         setLoading(false);
@@ -38,70 +32,69 @@ export default function StorageTable({
   }, [carGeneration, sortOrder]);
 
   if (loading) {
-    return <div className="text-center py-4">Загрузка...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      </div>
+    );
   }
 
   if (parts.length === 0) {
     return (
-      <div className="mt-6 flow-root flex-1">
-        <div className="inline-block min-w-full align-middle">
-          <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-            <p className="text-center text-gray-500 py-4">Нет доступных запчастей</p>
-          </div>
-        </div>
+      <div className="text-center py-8">
+        <p className="text-gray-500">Запчасти не найдены</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 flow-root flex-1">
-      <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-          <table className="min-w-full text-gray-900 md:table">
-            <thead className="rounded-lg text-left text-sm font-normal">
-              <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Наименование товара
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Статус
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Цена
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Действия
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white">
-              {parts.map((item) => (
-                <tr
-                  key={item.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3 font-bold">
-                      {item.name}
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">{item.status}</td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {formatCurrency(item.price)}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    <AddToCartButton
-                      id={item.id}
-                      name={item.name}
-                      price={item.price}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Название
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Цена
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Статус
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Действия
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {parts.map((item) => (
+            <tr key={item.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">{item.name}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{formatCurrency(item.price)}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                  item.status === 'В наличии' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {item.status}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <AddToCartButton
+                  id={item.id}
+                  name={item.name}
+                  price={item.price}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

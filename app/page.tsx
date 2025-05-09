@@ -1,15 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StorageTable from "./ui/index/table";
-import StorageFilters from "./ui/index/filters";
 import LogoutWrapper from "./ui/logout-wrapper";
 import {
   fetchBrands,
   fetchGenerationsByModel,
   fetchModelsByBrand,
 } from "./lib/data";
-import { fetchParts } from "./lib/dopolnenie";
 import { CartProvider } from './lib/cart-context';
 import CartIcon from './ui/cart-icon';
 import type { Brand, Model, Generation } from './lib/types';
@@ -22,6 +20,14 @@ export default function Page() {
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedGeneration, setSelectedGeneration] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+
+  useEffect(() => {
+    const loadBrands = async () => {
+      const fetchedBrands = await fetchBrands();
+      setBrands(fetchedBrands);
+    };
+    loadBrands();
+  }, []);
 
   const handleBrandChange = async (brandId: string) => {
     setSelectedBrand(brandId);
