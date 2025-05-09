@@ -24,7 +24,8 @@ export default async function Page(props: {
     carBrand,
     carModel,
     carGeneration,
-    sortOrder
+    sortOrder,
+    rawParams: searchParams
   });
 
   const brands = await fetchBrands();
