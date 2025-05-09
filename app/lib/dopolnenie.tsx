@@ -75,9 +75,10 @@ export async function fetchParts({
         throw new Error('Database connection URL is not configured');
       }
 
-      let query = `SELECT car_parts.id, car_parts.name, car_parts.price FROM car_parts
-        JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
-        JOIN car_models ON car_parts_models.model_id = car_models.id`;
+      let query = `SELECT DISTINCT car_parts.id, car_parts.name, car_parts.price 
+        FROM car_parts
+        LEFT JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
+        LEFT JOIN car_models ON car_parts_models.model_id = car_models.id`;
     
       const conditions: string[] = [];
       const values: any[] = [];
@@ -105,6 +106,10 @@ export async function fetchParts({
     
       const parts = await sql.unsafe(query, values);
       console.log('Query result:', parts);
+      
+      if (!parts || parts.length === 0) {
+        console.log('No parts found with the given criteria');
+      }
       
       return parts as unknown as Part[];
     } catch (error) {
