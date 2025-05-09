@@ -15,6 +15,12 @@ const sql = postgres(process.env.POSTGRES_URL!, {
   connect_timeout: 10,
 });
 
+type Part = {
+  id: string;
+  name: string;
+  price: number;
+};
+
 export default async function Page(props: {
   searchParams?: Promise<{
     model?: string;
@@ -52,6 +58,7 @@ export default async function Page(props: {
     </main>
   );
 }
+
 export async function fetchParts({
     modelId,
     generationId,
@@ -60,8 +67,8 @@ export async function fetchParts({
     modelId?: string | null;
     generationId?: string | null;
     sortOrder?: string | null;
-  }) {
-    let query = `SELECT * FROM car_parts
+  }): Promise<Part[]> {
+    let query = `SELECT car_parts.id, car_parts.name, car_parts.price FROM car_parts
       JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
       JOIN car_models ON car_parts_models.model_id = car_models.id`;
   
@@ -87,6 +94,6 @@ export async function fetchParts({
     }
   
     const parts = await sql.unsafe(query, values);
-    return parts;
+    return parts as unknown as Part[];
   }
   

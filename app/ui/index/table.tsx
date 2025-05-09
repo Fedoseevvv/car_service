@@ -1,4 +1,3 @@
-import fetchPartsByGenerationName  from "@/app/lib/dopolnenie";
 import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
 
@@ -8,19 +7,22 @@ type Props = {
   sortOrder?: string | null;
 };
 
+type Part = {
+  id: string;
+  name: string;
+  price: number;
+};
+
 export default async function StorageTable({
   carModel,
   carGeneration,
   sortOrder,
 }: Props) {
-  // Логика: если задана сортировка — использовать новую функцию
-  const parts = sortOrder
-    ? await fetchParts({
-        modelId: carModel,
-        generationId: carGeneration,
-        sortOrder,
-      })
-    : await fetchPartsByGenerationName(carGeneration);
+  const parts = await fetchParts({
+    modelId: carModel,
+    generationId: carGeneration,
+    sortOrder,
+  });
 
   return (
     <div className="mt-6 flow-root flex-1">
@@ -41,7 +43,7 @@ export default async function StorageTable({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {parts?.map((item: any) => (
+              {parts?.map((item: Part) => (
                 <tr
                   key={item.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
