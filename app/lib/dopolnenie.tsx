@@ -7,6 +7,7 @@ import {
   fetchModelsByBrand,
   fetchGenerationsByModel,
 } from "../lib/data";
+import { carBrands } from './placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, {
   ssl: 'require',
@@ -70,48 +71,28 @@ export async function fetchParts({
     sortOrder?: string | null;
   }): Promise<Part[]> {
     try {
-      if (!process.env.POSTGRES_URL) {
-        console.error('POSTGRES_URL is not defined');
-        throw new Error('Database connection URL is not configured');
-      }
-
-      let query = `SELECT DISTINCT car_parts.id, car_parts.name, car_parts.price 
-        FROM car_parts
-        LEFT JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
-        LEFT JOIN car_models ON car_parts_models.model_id = car_models.id`;
-    
-      const conditions: string[] = [];
-      const values: any[] = [];
-    
-      if (modelId) {
-        conditions.push(`car_models.id = $${values.length + 1}`);
-        values.push(modelId);
-      }
-    
+      // Получаем все запчасти из всех брендов
+      const allParts = carBrands.flatMap(brand => brand.parts);
+      
+      // Фильтруем запчасти по поколению, если указано
+      let filteredParts = allParts;
       if (generationId) {
-        conditions.push(`car_models.generation = $${values.length + 1}`);
-        values.push(generationId);
+        filteredParts = allParts.filter(part => 
+          part.relations.includes(generationId)
+        );
       }
-    
-      if (conditions.length > 0) {
-        query += ` WHERE ` + conditions.join(" AND ");
-      }
-    
-      if (sortOrder === "asc" || sortOrder === "desc") {
-        query += ` ORDER BY car_parts.price ${sortOrder}`;
+      
+      // Сортируем запчасти по цене, если указан порядок сортировки
+      if (sortOrder === 'asc' || sortOrder === 'desc') {
+        filteredParts.sort((a, b) => {
+          return sortOrder === 'asc' 
+            ? a.price - b.price 
+            : b.price - a.price;
+        });
       }
 
-      console.log('Executing query:', query);
-      console.log('With values:', values);
-    
-      const parts = await sql.unsafe(query, values);
-      console.log('Query result:', parts);
-      
-      if (!parts || parts.length === 0) {
-        console.log('No parts found with the given criteria');
-      }
-      
-      return parts as unknown as Part[];
+      console.log('Filtered parts:', filteredParts);
+      return filteredParts;
     } catch (error) {
       console.error('Error in fetchParts:', error);
       if (error instanceof Error) {
