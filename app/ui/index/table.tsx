@@ -1,5 +1,9 @@
+'use client';
+
 import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
+import { useEffect, useState } from 'react';
+import AddToCartButton from '../add-to-cart-button';
 
 type Props = {
   carGeneration: string | null;
@@ -12,20 +16,38 @@ type Part = {
   price: number;
 };
 
-export default async function StorageTable({
+export default function StorageTable({
   carGeneration,
   sortOrder,
 }: Props) {
-  console.log('StorageTable props:', { carGeneration, sortOrder });
+  const [parts, setParts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const parts = await fetchParts({
-    generationId: carGeneration,
-    sortOrder,
-  });
+  useEffect(() => {
+    const loadParts = async () => {
+      setLoading(true);
+      try {
+        const fetchedParts = await fetchParts({
+          generationId: carGeneration,
+          sortOrder,
+        });
+        setParts(fetchedParts);
+      } catch (error) {
+        console.error('Error loading parts:', error);
+        setParts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  console.log('Fetched parts in table:', parts);
+    loadParts();
+  }, [carGeneration, sortOrder]);
 
-  if (!parts || parts.length === 0) {
+  if (loading) {
+    return <div className="text-center py-4">Загрузка...</div>;
+  }
+
+  if (parts.length === 0) {
     return (
       <div className="mt-6 flow-root flex-1">
         <div className="inline-block min-w-full align-middle">
@@ -53,6 +75,9 @@ export default async function StorageTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Цена
                 </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Действия
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -69,6 +94,13 @@ export default async function StorageTable({
                   <td className="whitespace-nowrap px-3 py-3">В наличии ✅</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(item.price)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <AddToCartButton
+                      id={item.id}
+                      name={item.name}
+                      price={item.price}
+                    />
                   </td>
                 </tr>
               ))}

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import StorageTable from "./ui/index/table";
 import StorageFilters from "./ui/index/filters";
 import LogoutWrapper from "./ui/logout-wrapper";
@@ -7,70 +10,147 @@ import {
   fetchModelsByBrand,
 } from "./lib/data";
 import { fetchParts } from "./lib/dopolnenie";
+import { CartProvider } from './lib/cart-context';
+import CartIcon from './ui/cart-icon';
 
 type Generation = {
   id: string;
   name: string;
 };
 
-export default async function Page(props: {
-  searchParams?: Promise<{
-    model?: string;
-    brand?: string;
-    generation?: string;
-    sort?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const carBrand = searchParams?.brand || null;
-  const carModel = searchParams?.model || null;
-  const carGeneration = searchParams?.generation || null;
-  const sortOrder = searchParams?.sort || null;
+export default function Page() {
+  const [brands, setBrands] = useState<any[]>([]);
+  const [models, setModels] = useState<any[]>([]);
+  const [generations, setGenerations] = useState<any[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedGeneration, setSelectedGeneration] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
 
-  console.log('Page params:', {
-    carBrand,
-    carModel,
-    carGeneration,
-    sortOrder,
-    rawParams: searchParams
-  });
+  const handleBrandChange = async (brandId: string) => {
+    setSelectedBrand(brandId);
+    setSelectedModel('');
+    setSelectedGeneration('');
+    setModels([]);
+    setGenerations([]);
 
-  const brands = await fetchBrands();
-  const models = carBrand ? await fetchModelsByBrand(carBrand) : null;
-  const generations = carModel ? await fetchGenerationsByModel(carModel) : null;
+    if (brandId) {
+      const fetchedModels = await fetchModelsByBrand(brandId);
+      setModels(fetchedModels);
+    }
+  };
 
-  console.log('Available data:', {
-    brands,
-    models,
-    generations,
-    selectedGeneration: generations?.find((g: Generation) => g.id === carGeneration)
-  });
+  const handleModelChange = async (modelId: string) => {
+    setSelectedModel(modelId);
+    setSelectedGeneration('');
+    setGenerations([]);
 
-  const parts = await fetchParts({
-    generationId: carGeneration,
-    sortOrder,
-  });
+    if (modelId) {
+      const fetchedGenerations = await fetchGenerationsByModel(modelId);
+      setGenerations(fetchedGenerations);
+    }
+  };
 
-  console.log('Fetched parts:', parts);
+  const handleGenerationChange = (generationId: string) => {
+    setSelectedGeneration(generationId);
+  };
+
+  const handleSortChange = (order: string) => {
+    setSortOrder(order);
+  };
 
   return (
-    <main className="flex flex-col p-6 gap-6">
-      <LogoutWrapper />
-      <div className="flex flex-row gap-10">
-        <StorageFilters
-          generations={generations}
-          carGeneration={carGeneration}
-          brands={brands}
-          models={models}
-          carBrand={carBrand}
-          carModel={carModel}
-          sortOrder={sortOrder}
-        />
-        <StorageTable 
-          carGeneration={carGeneration}
-          sortOrder={sortOrder}
-        />
-      </div>
-    </main>
+    <CartProvider>
+      <main className="flex-1 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <LogoutWrapper />
+            <CartIcon />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div>
+              <label htmlFor="brand" className="block text-sm font-medium text-gray-700">
+                Марка
+              </label>
+              <select
+                id="brand"
+                value={selectedBrand}
+                onChange={(e) => handleBrandChange(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
+              >
+                <option value="">Выберите марку</option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="model" className="block text-sm font-medium text-gray-700">
+                Модель
+              </label>
+              <select
+                id="model"
+                value={selectedModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
+                disabled={!selectedBrand}
+              >
+                <option value="">Выберите модель</option>
+                {models.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="generation" className="block text-sm font-medium text-gray-700">
+                Поколение
+              </label>
+              <select
+                id="generation"
+                value={selectedGeneration}
+                onChange={(e) => handleGenerationChange(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
+                disabled={!selectedModel}
+              >
+                <option value="">Выберите поколение</option>
+                {generations.map((generation) => (
+                  <option key={generation.id} value={generation.id}>
+                    {generation.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="sort" className="block text-sm font-medium text-gray-700">
+                Сортировка
+              </label>
+              <select
+                id="sort"
+                value={sortOrder}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
+              >
+                <option value="">По умолчанию</option>
+                <option value="asc">По возрастанию цены</option>
+                <option value="desc">По убыванию цены</option>
+              </select>
+            </div>
+          </div>
+
+          <StorageTable
+            carGeneration={selectedGeneration}
+            sortOrder={sortOrder}
+          />
+        </div>
+      </main>
+    </CartProvider>
   );
 }
