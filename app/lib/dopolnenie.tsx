@@ -59,13 +59,11 @@ export async function fetchParts({
     sortOrder?: string | null;
   }): Promise<Part[]> {
     try {
-      // Получаем все запчасти из всех брендов
-      const allParts = carBrands.flatMap(brand => brand.parts);
+      let filteredParts: Part[] = [];
       
-      // Фильтруем запчасти по поколению
-      let filteredParts = allParts;
+      // Сначала фильтруем по бренду и поколению
       if (generationId) {
-        // Находим бренд и модель, к которым относится выбранное поколение
+        // Находим бренд, к которому относится выбранное поколение
         const brandWithGeneration = carBrands.find(brand => 
           brand.brands.some(model => 
             model.generations.some(gen => gen.id === generationId)
@@ -73,16 +71,17 @@ export async function fetchParts({
         );
 
         if (brandWithGeneration) {
-          // Фильтруем запчасти только этого бренда
+          // Берем только запчасти этого бренда, которые подходят для выбранного поколения
           filteredParts = brandWithGeneration.parts.filter(part => 
             part.relations.includes(generationId)
           );
-        } else {
-          filteredParts = [];
         }
+      } else {
+        // Если поколение не выбрано, показываем все запчасти
+        filteredParts = carBrands.flatMap(brand => brand.parts);
       }
       
-      // Сортируем запчасти по цене
+      // Затем сортируем по цене, если указан порядок сортировки
       if (sortOrder === 'asc' || sortOrder === 'desc') {
         filteredParts.sort((a, b) => {
           return sortOrder === 'asc' 
