@@ -2,7 +2,6 @@ import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
 
 type Props = {
-  carModel?: string | null;
   carGeneration: string | null;
   sortOrder?: string | null;
 };
@@ -14,7 +13,6 @@ type Part = {
 };
 
 export default async function StorageTable({
-  carModel,
   carGeneration,
   sortOrder,
 }: Props) {

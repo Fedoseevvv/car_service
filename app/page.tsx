@@ -37,7 +37,6 @@ export default async function Page(props: {
       />
       <StorageTable 
         carGeneration={carGeneration}
-        carModel={carModel}
         sortOrder={sortOrder}
       />
     </main>

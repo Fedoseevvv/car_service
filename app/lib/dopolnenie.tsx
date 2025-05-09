@@ -44,7 +44,6 @@ export default async function Page(props: {
         sortOrder={sortOrder}
       />
       <StorageTable
-        carModel={carModel}
         carGeneration={carGeneration}
         sortOrder={sortOrder}
       />
@@ -78,7 +77,7 @@ export async function fetchParts({
       }
 
       return filteredParts;
-    } catch (error) {
+    } catch {
       return [];
     }
   }
