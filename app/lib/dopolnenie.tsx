@@ -68,24 +68,11 @@ export async function fetchParts({
         filteredParts = carBrands.flatMap(brand => brand.parts);
         console.log('No generation selected, showing all parts:', filteredParts.length);
       } else {
-        // Находим бренд и модель для выбранного поколения
-        for (const brand of carBrands) {
-          for (const model of brand.brands) {
-            const generation = model.generations.find(gen => gen.id === generationId);
-            if (generation) {
-              console.log(`Found generation ${generation.name} in brand ${brand.name}, model ${model.name}`);
-              // Берем запчасти только этого бренда
-              filteredParts = brand.parts.filter(part => {
-                const hasRelation = part.relations.includes(generationId);
-                console.log(`Part ${part.name} has relation to ${generationId}: ${hasRelation}`);
-                return hasRelation;
-              });
-              console.log('Filtered parts:', filteredParts.map(p => p.name));
-              break;
-            }
-          }
-          if (filteredParts.length > 0) break;
-        }
+        // Ищем запчасти во всех брендах
+        filteredParts = carBrands.flatMap(brand => 
+          brand.parts.filter(part => part.relations.includes(generationId))
+        );
+        console.log('Filtered parts by generation:', filteredParts.map(p => p.name));
       }
       
       // Сортируем по цене, если указан порядок сортировки
