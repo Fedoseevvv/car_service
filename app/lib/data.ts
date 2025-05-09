@@ -1,61 +1,19 @@
+import { brands, models, generations } from './placeholder-data';
+import type { Brand, Model, Generation } from './types';
 import postgres from "postgres";
 
 const sql = postgres(process.env.POSTGRES_URL!);
 
-export async function fetchBrands(): Promise<string[]> {
-  try {
-    const brands = await sql`
-      SELECT name FROM car_brands
-    `;
-    return brands.map((v) => v.name);
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch brands.");
-  }
+export async function fetchBrands(): Promise<Brand[]> {
+  return brands;
 }
 
-export async function fetchModelsByBrand(brandName: string): Promise<string[]> {
-  try {
-    const brandId = await sql`
-      SELECT id FROM car_brands
-      WHERE name = ${brandName};
-    `;
-
-    const models = await sql`
-      SELECT name FROM car_models
-      WHERE brand_id = ${brandId[0].id};
-    `;
-
-    return models.map((m) => m.name);
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch models.");
-  }
+export async function fetchModelsByBrand(brandId: string): Promise<Model[]> {
+  return models.filter(model => model.brandId === brandId);
 }
 
-// Получить поколения по модели
-export async function fetchGenerationsByModel(modelName: string | null): Promise<Array<{ id: string; name: string }>> {
-  try {
-    if (!modelName) {
-      const generations = await sql`SELECT id, name FROM car_generations`;
-      return generations.map((g) => ({ id: g.id, name: g.name }));
-    }
-
-    const modelId = await sql`
-      SELECT id FROM car_models
-      WHERE name = ${modelName};
-    `;
-
-    const generations = await sql`
-      SELECT id, name FROM car_generations
-      WHERE model_id = ${modelId[0].id};
-    `;
-
-    return generations.map((g) => ({ id: g.id, name: g.name }));
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch generations.");
-  }
+export async function fetchGenerationsByModel(modelId: string): Promise<Generation[]> {
+  return generations.filter(generation => generation.modelId === modelId);
 }
 
 export async function fetchPartsByGenerationName(

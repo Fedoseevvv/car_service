@@ -4,23 +4,18 @@ import { fetchParts } from "@/app/lib/dopolnenie";
 import { formatCurrency } from "@/app/lib/utils";
 import { useEffect, useState } from 'react';
 import AddToCartButton from '../add-to-cart-button';
+import type { Part } from '@/app/lib/types';
 
 type Props = {
   carGeneration: string | null;
   sortOrder?: string | null;
 };
 
-type Part = {
-  id: string;
-  name: string;
-  price: number;
-};
-
 export default function StorageTable({
   carGeneration,
   sortOrder,
 }: Props) {
-  const [parts, setParts] = useState<any[]>([]);
+  const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,9 +26,8 @@ export default function StorageTable({
           generationId: carGeneration,
           sortOrder,
         });
-        setParts(fetchedParts);
+        setParts(fetchedParts as Part[]);
       } catch (error) {
-        console.error('Error loading parts:', error);
         setParts([]);
       } finally {
         setLoading(false);
@@ -81,7 +75,7 @@ export default function StorageTable({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {parts.map((item: Part) => (
+              {parts.map((item) => (
                 <tr
                   key={item.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
@@ -91,7 +85,7 @@ export default function StorageTable({
                       {item.name}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">В наличии ✅</td>
+                  <td className="whitespace-nowrap px-3 py-3">{item.status}</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(item.price)}
                   </td>

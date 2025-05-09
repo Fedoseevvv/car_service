@@ -12,16 +12,12 @@ import {
 import { fetchParts } from "./lib/dopolnenie";
 import { CartProvider } from './lib/cart-context';
 import CartIcon from './ui/cart-icon';
-
-type Generation = {
-  id: string;
-  name: string;
-};
+import type { Brand, Model, Generation } from './lib/types';
 
 export default function Page() {
-  const [brands, setBrands] = useState<any[]>([]);
-  const [models, setModels] = useState<any[]>([]);
-  const [generations, setGenerations] = useState<any[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedGeneration, setSelectedGeneration] = useState('');
