@@ -10,14 +10,14 @@ export default async function Page(props: {
   searchParams?: Promise<{
     model?: string;
     brand?: string;
-    generations?: string;
+    generation?: string;
     sort?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const carBrand = searchParams?.brand || null;
   const carModel = searchParams?.model || null;
-  const carGeneration = searchParams?.generations || null;
+  const carGeneration = searchParams?.generation || null;
   const sortOrder = searchParams?.sort || null;
 
   console.log('URL params:', { carBrand, carModel, carGeneration, sortOrder });
