@@ -20,6 +20,8 @@ export default async function Page(props: {
   const carGeneration = searchParams?.generations || null;
   const sortOrder = searchParams?.sort || null;
 
+  console.log('URL params:', { carBrand, carModel, carGeneration, sortOrder });
+
   const brands = await fetchBrands();
   const models = carBrand ? await fetchModelsByBrand(carBrand) : null;
   const generations = carModel ? await fetchGenerationsByModel(carModel) : null;

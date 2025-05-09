@@ -63,9 +63,11 @@ export async function fetchParts({
       let filteredParts = allParts;
       
       if (generationId) {
-        filteredParts = allParts.filter(part => 
-          part.relations.includes(generationId)
-        );
+        filteredParts = allParts.filter(part => {
+          const hasRelation = part.relations.includes(generationId);
+          console.log(`Part ${part.name} has relation ${generationId}: ${hasRelation}`);
+          return hasRelation;
+        });
       }
       
       if (sortOrder === 'asc' || sortOrder === 'desc') {
@@ -76,6 +78,7 @@ export async function fetchParts({
         });
       }
 
+      console.log('Filtered parts:', filteredParts);
       return filteredParts;
     } catch {
       return [];
