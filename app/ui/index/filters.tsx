@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Select from "react-select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -9,12 +9,6 @@ import {
   CAR_GENERATION_SEARCH_PARAM,
 } from "@/app/lib/constants";
 import { capitalize } from "@/app/lib/utils";
-import {
-  fetchBrands,
-  fetchGenerationsByModel,
-  fetchModelsByBrand,
-} from "@/app/lib/data";
-import type { Brand, Model, Generation } from '@/app/lib/types';
 
 const priceSortOptions = [
   { value: "asc", label: "По возрастанию" },
@@ -43,16 +37,6 @@ export default function Filters({
   const { replace } = useRouter();
   const currentSort = sortOrder;
 
-  console.log('Filters props:', {
-    carModel,
-    carBrand,
-    carGeneration,
-    brands,
-    models,
-    generations,
-    sortOrder
-  });
-
   const params = new URLSearchParams(searchParams.toString());
 
   const brandsOptions = brands.map((brand) => ({
@@ -64,8 +48,6 @@ export default function Filters({
     name: string,
     value: { value: string; label: string } | null
   ) => {
-    console.log('Filter change:', { name, value });
-
     if (!value) {
       params.delete(name);
     } else {
@@ -81,7 +63,6 @@ export default function Filters({
     }
 
     const newUrl = `${pathname}?${params.toString()}`;
-    console.log('New URL:', newUrl);
     replace(newUrl);
   };
 
