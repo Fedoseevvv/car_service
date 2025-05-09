@@ -13,6 +13,7 @@ const sql = postgres(process.env.POSTGRES_URL!, {
   max: 1,
   idle_timeout: 20,
   connect_timeout: 10,
+  debug: process.env.NODE_ENV === 'development'
 });
 
 type Part = {
@@ -68,32 +69,53 @@ export async function fetchParts({
     generationId?: string | null;
     sortOrder?: string | null;
   }): Promise<Part[]> {
-    let query = `SELECT car_parts.id, car_parts.name, car_parts.price FROM car_parts
-      JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
-      JOIN car_models ON car_parts_models.model_id = car_models.id`;
-  
-    const conditions: string[] = [];
-    const values: any[] = [];
-  
-    if (modelId) {
-      conditions.push(`car_models.id = $${values.length + 1}`);
-      values.push(modelId);
+    try {
+      if (!process.env.POSTGRES_URL) {
+        console.error('POSTGRES_URL is not defined');
+        throw new Error('Database connection URL is not configured');
+      }
+
+      let query = `SELECT car_parts.id, car_parts.name, car_parts.price FROM car_parts
+        JOIN car_parts_models ON car_parts.id = car_parts_models.part_id
+        JOIN car_models ON car_parts_models.model_id = car_models.id`;
+    
+      const conditions: string[] = [];
+      const values: any[] = [];
+    
+      if (modelId) {
+        conditions.push(`car_models.id = $${values.length + 1}`);
+        values.push(modelId);
+      }
+    
+      if (generationId) {
+        conditions.push(`car_models.generation = $${values.length + 1}`);
+        values.push(generationId);
+      }
+    
+      if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(" AND ");
+      }
+    
+      if (sortOrder === "asc" || sortOrder === "desc") {
+        query += ` ORDER BY car_parts.price ${sortOrder}`;
+      }
+
+      console.log('Executing query:', query);
+      console.log('With values:', values);
+    
+      const parts = await sql.unsafe(query, values);
+      console.log('Query result:', parts);
+      
+      return parts as unknown as Part[];
+    } catch (error) {
+      console.error('Error in fetchParts:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack
+        });
+      }
+      return [];
     }
-  
-    if (generationId) {
-      conditions.push(`car_models.generation = $${values.length + 1}`);
-      values.push(generationId);
-    }
-  
-    if (conditions.length > 0) {
-      query += ` WHERE ` + conditions.join(" AND ");
-    }
-  
-    if (sortOrder === "asc" || sortOrder === "desc") {
-      query += ` ORDER BY car_parts.price ${sortOrder}`;
-    }
-  
-    const parts = await sql.unsafe(query, values);
-    return parts as unknown as Part[];
   }
   
