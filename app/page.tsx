@@ -20,11 +20,22 @@ export default async function Page(props: {
   const carGeneration = searchParams?.generation || null;
   const sortOrder = searchParams?.sort || null;
 
-  console.log('URL params:', { carBrand, carModel, carGeneration, sortOrder });
+  console.log('Page params:', {
+    carBrand,
+    carModel,
+    carGeneration,
+    sortOrder
+  });
 
   const brands = await fetchBrands();
   const models = carBrand ? await fetchModelsByBrand(carBrand) : null;
   const generations = carModel ? await fetchGenerationsByModel(carModel) : null;
+
+  console.log('Available data:', {
+    brands,
+    models,
+    generations
+  });
 
   return (
     <main className="flex flex-row p-6 gap-10">
