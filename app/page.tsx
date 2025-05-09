@@ -40,10 +40,10 @@ export default async function Page(props: {
   return (
     <main className="flex flex-row p-6 gap-10">
       <StorageFilters
-        generations={generations as string[] | null}
+        generations={generations}
         carGeneration={carGeneration}
-        brands={brands as string[]}
-        models={models as string[] | null}
+        brands={brands}
+        models={models}
         carBrand={carBrand}
         carModel={carModel}
         sortOrder={sortOrder}
