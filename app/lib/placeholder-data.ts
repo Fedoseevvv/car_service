@@ -65,10 +65,7 @@ export const models: Model[] = [
   { id: '37', name: '3', brandId: '10' },
   { id: '38', name: '6', brandId: '10' },
   { id: '39', name: 'CX-5', brandId: '10' },
-  { id: '40', name: 'CX-9', brandId: '10' },
-  // Mazda CX-5
-  { id: '33', name: 'KE (2012-2017)', modelId: '39' },
-  { id: '34', name: 'KF (2017-2023)', modelId: '39' },
+  { id: '40', name: 'CX-9', brandId: '10' }
 ];
 
 export const generations: Generation[] = [
@@ -111,13 +108,6 @@ export const generations: Generation[] = [
   { id: '27', name: 'BL (2008-2013)', modelId: '37' },
   { id: '28', name: 'BM (2013-2019)', modelId: '37' },
   { id: '29', name: 'BP (2018-2023)', modelId: '37' },
-  // Mazda 6
-  { id: '30', name: 'GH (2007-2012)', modelId: '38' },
-  { id: '31', name: 'GJ (2012-2018)', modelId: '38' },
-  { id: '32', name: 'GJ FL (2018-2023)', modelId: '38' },
-  // Mazda CX-5
-  { id: '33', name: 'KE (2012-2017)', modelId: '39' },
-  { id: '34', name: 'KF (2017-2023)', modelId: '39' },
   // Mazda 6
   { id: '30', name: 'GH (2007-2012)', modelId: '38' },
   { id: '31', name: 'GJ (2012-2018)', modelId: '38' },
