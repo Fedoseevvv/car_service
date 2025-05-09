@@ -60,18 +60,15 @@ export async function fetchParts({
     sortOrder?: string | null;
   }): Promise<Part[]> {
     try {
-      // Получаем все запчасти из всех брендов
       const allParts = carBrands.flatMap(brand => brand.parts);
-      
-      // Фильтруем запчасти по поколению, если указано
       let filteredParts = allParts;
+      
       if (generationId) {
         filteredParts = allParts.filter(part => 
           part.relations.includes(generationId)
         );
       }
       
-      // Сортируем запчасти по цене, если указан порядок сортировки
       if (sortOrder === 'asc' || sortOrder === 'desc') {
         filteredParts.sort((a, b) => {
           return sortOrder === 'asc' 
