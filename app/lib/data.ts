@@ -19,7 +19,6 @@ export async function fetchGenerationsByModel(modelId: string): Promise<Generati
 export async function fetchPartsByGenerationName(
   generationName: string | null
 ) {
-  console.log(generationName);
   try {
     if (!generationName) {
       return await sql`SELECT * FROM car_parts`;
@@ -29,8 +28,6 @@ export async function fetchPartsByGenerationName(
       SELECT id FROM car_generations
       WHERE name = ${generationName};
     `;
-
-    console.log(generationId);
 
     if (!generationId || generationId.length === 0) {
       return [];
@@ -48,7 +45,7 @@ export async function fetchPartsByGenerationName(
 
     return relatedParts;
   } catch (error) {
-    console.error("Database Error:", error);
+    // В продакшене здесь можно добавить логирование в файл или сервис мониторинга
     throw new Error("Failed to fetch parts.");
   }
 }
