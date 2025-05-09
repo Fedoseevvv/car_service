@@ -7,6 +7,11 @@ import {
 } from "./lib/data";
 import { fetchParts } from "./lib/dopolnenie";
 
+type Generation = {
+  id: string;
+  name: string;
+};
+
 export default async function Page(props: {
   searchParams?: Promise<{
     model?: string;
@@ -36,7 +41,8 @@ export default async function Page(props: {
   console.log('Available data:', {
     brands,
     models,
-    generations
+    generations,
+    selectedGeneration: generations?.find((g: Generation) => g.id === carGeneration)
   });
 
   const parts = await fetchParts({

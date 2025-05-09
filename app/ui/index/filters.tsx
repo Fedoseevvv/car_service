@@ -30,7 +30,7 @@ export default function Filters({
   brands: string[];
   models: string[] | null;
   sortOrder: string | null;
-  generations: string[] | null;
+  generations: Array<{ id: string; name: string }> | null;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -126,12 +126,12 @@ export default function Filters({
           <Select
             placeholder="Выберите поколение"
             value={generations
-              .map((g) => ({ value: g, label: g }))
+              .map((g) => ({ value: g.id, label: g.name }))
               .find((o) => o.value === carGeneration)}
             onChange={(v) => handleFilterChange(CAR_GENERATION_SEARCH_PARAM, v)}
             options={generations.map((g) => ({
-              value: g,
-              label: g,
+              value: g.id,
+              label: g.name,
             }))}
             isSearchable={false}
           />

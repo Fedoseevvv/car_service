@@ -34,11 +34,11 @@ export async function fetchModelsByBrand(brandName: string): Promise<string[]> {
 }
 
 // Получить поколения по модели
-export async function fetchGenerationsByModel(modelName: string | null): Promise<string[]> {
+export async function fetchGenerationsByModel(modelName: string | null): Promise<Array<{ id: string; name: string }>> {
   try {
     if (!modelName) {
-      const generations = await sql`SELECT name FROM car_generations`;
-      return generations.map((g) => g.name);
+      const generations = await sql`SELECT id, name FROM car_generations`;
+      return generations.map((g) => ({ id: g.id, name: g.name }));
     }
 
     const modelId = await sql`
@@ -47,11 +47,11 @@ export async function fetchGenerationsByModel(modelName: string | null): Promise
     `;
 
     const generations = await sql`
-      SELECT name FROM car_generations
+      SELECT id, name FROM car_generations
       WHERE model_id = ${modelId[0].id};
     `;
 
-    return generations.map((g) => g.name);
+    return generations.map((g) => ({ id: g.id, name: g.name }));
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch generations.");
