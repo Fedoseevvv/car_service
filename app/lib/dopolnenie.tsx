@@ -7,8 +7,13 @@ import {
   fetchModelsByBrand,
   fetchGenerationsByModel,
 } from "../lib/data";
-import { strictEqual } from "assert";
-const sql = postgres(process.env.POSTGRES_URL!); 
+
+const sql = postgres(process.env.POSTGRES_URL!, {
+  ssl: 'require',
+  max: 1,
+  idle_timeout: 20,
+  connect_timeout: 10,
+});
 
 export default async function Page(props: {
   searchParams?: Promise<{
