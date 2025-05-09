@@ -2,8 +2,9 @@
 
 import { useCart } from '../lib/cart-context';
 import { useRouter } from 'next/navigation';
+import { CartProvider } from '../lib/cart-context';
 
-export default function CartPage() {
+function CartContent() {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const router = useRouter();
 
@@ -88,5 +89,13 @@ export default function CartPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <CartProvider>
+      <CartContent />
+    </CartProvider>
   );
 } 
