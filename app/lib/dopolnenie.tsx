@@ -67,40 +67,40 @@ export async function fetchParts({
       if (!generationId) {
         filteredParts = carBrands.flatMap(brand => brand.parts);
         console.log('No generation selected, showing all parts:', filteredParts.length);
-        return filteredParts;
-      }
-
-      // Находим бренд и модель для выбранного поколения
-      for (const brand of carBrands) {
-        for (const model of brand.brands) {
-          const generation = model.generations.find(gen => gen.id === generationId);
-          if (generation) {
-            console.log(`Found generation ${generation.name} in brand ${brand.name}, model ${model.name}`);
-            // Берем запчасти только этого бренда
-            filteredParts = brand.parts.filter(part => {
-              const hasRelation = part.relations.includes(generationId);
-              console.log(`Part ${part.name} has relation to ${generationId}: ${hasRelation}`);
-              return hasRelation;
-            });
-            console.log('Filtered parts:', filteredParts.map(p => p.name));
-            
-            // Сортируем по цене, если указан порядок сортировки
-            if (sortOrder === 'asc' || sortOrder === 'desc') {
-              filteredParts.sort((a, b) => {
-                return sortOrder === 'asc' 
-                  ? a.price - b.price 
-                  : b.price - a.price;
+      } else {
+        // Находим бренд и модель для выбранного поколения
+        for (const brand of carBrands) {
+          for (const model of brand.brands) {
+            const generation = model.generations.find(gen => gen.id === generationId);
+            if (generation) {
+              console.log(`Found generation ${generation.name} in brand ${brand.name}, model ${model.name}`);
+              // Берем запчасти только этого бренда
+              filteredParts = brand.parts.filter(part => {
+                const hasRelation = part.relations.includes(generationId);
+                console.log(`Part ${part.name} has relation to ${generationId}: ${hasRelation}`);
+                return hasRelation;
               });
-              console.log('Sorted parts:', filteredParts.map(p => `${p.name} (${p.price})`));
+              console.log('Filtered parts:', filteredParts.map(p => p.name));
+              break;
             }
-            
-            return filteredParts;
           }
+          if (filteredParts.length > 0) break;
         }
       }
       
-      console.log('No parts found for generation:', generationId);
-      return [];
+      // Сортируем по цене, если указан порядок сортировки
+      if (sortOrder === 'asc' || sortOrder === 'desc') {
+        console.log('Sorting parts by price:', sortOrder);
+        filteredParts.sort((a, b) => {
+          return sortOrder === 'asc' 
+            ? a.price - b.price 
+            : b.price - a.price;
+        });
+        console.log('Sorted parts:', filteredParts.map(p => `${p.name} (${p.price})`));
+      }
+
+      console.log('Final parts list:', filteredParts);
+      return filteredParts;
     } catch (error) {
       console.error('Error in fetchParts:', error);
       return [];
