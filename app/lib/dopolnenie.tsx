@@ -61,24 +61,35 @@ export async function fetchParts({
     try {
       let filteredParts: Part[] = [];
       
+      console.log('Selected generation ID:', generationId);
+      
       // Сначала фильтруем по бренду и поколению
       if (generationId) {
         // Находим бренд, к которому относится выбранное поколение
-        const brandWithGeneration = carBrands.find(brand => 
-          brand.brands.some(model => 
+        const brandWithGeneration = carBrands.find(brand => {
+          const hasGeneration = brand.brands.some(model => 
             model.generations.some(gen => gen.id === generationId)
-          )
-        );
+          );
+          console.log(`Brand ${brand.name} has generation ${generationId}: ${hasGeneration}`);
+          return hasGeneration;
+        });
+
+        console.log('Found brand:', brandWithGeneration?.name);
 
         if (brandWithGeneration) {
           // Берем только запчасти этого бренда, которые подходят для выбранного поколения
-          filteredParts = brandWithGeneration.parts.filter(part => 
-            part.relations.includes(generationId)
-          );
+          filteredParts = brandWithGeneration.parts.filter(part => {
+            const hasRelation = part.relations.includes(generationId);
+            console.log(`Part ${part.name} has relation to ${generationId}: ${hasRelation}`);
+            return hasRelation;
+          });
+          
+          console.log('Filtered parts:', filteredParts.map(p => p.name));
         }
       } else {
         // Если поколение не выбрано, показываем все запчасти
         filteredParts = carBrands.flatMap(brand => brand.parts);
+        console.log('No generation selected, showing all parts:', filteredParts.map(p => p.name));
       }
       
       // Затем сортируем по цене, если указан порядок сортировки
@@ -88,10 +99,12 @@ export async function fetchParts({
             ? a.price - b.price 
             : b.price - a.price;
         });
+        console.log('Sorted parts:', filteredParts.map(p => `${p.name} (${p.price})`));
       }
 
       return filteredParts;
-    } catch {
+    } catch (error) {
+      console.error('Error in fetchParts:', error);
       return [];
     }
   }
