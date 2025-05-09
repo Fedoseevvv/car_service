@@ -16,10 +16,14 @@ export default async function StorageTable({
   carGeneration,
   sortOrder,
 }: Props) {
+  console.log('StorageTable props:', { carGeneration, sortOrder });
+
   const parts = await fetchParts({
     generationId: carGeneration,
     sortOrder,
   });
+
+  console.log('Fetched parts:', parts);
 
   return (
     <div className="mt-6 flow-root flex-1">

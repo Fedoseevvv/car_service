@@ -5,6 +5,7 @@ import {
   fetchGenerationsByModel,
   fetchModelsByBrand,
 } from "./lib/data";
+import { fetchParts } from "./lib/dopolnenie";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -37,6 +38,13 @@ export default async function Page(props: {
     models,
     generations
   });
+
+  const parts = await fetchParts({
+    generationId: carGeneration,
+    sortOrder,
+  });
+
+  console.log('Fetched parts:', parts);
 
   return (
     <main className="flex flex-row p-6 gap-10">
