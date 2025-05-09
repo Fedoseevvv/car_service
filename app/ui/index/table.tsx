@@ -19,7 +19,6 @@ export default async function StorageTable({
   sortOrder,
 }: Props) {
   const parts = await fetchParts({
-    modelId: carModel,
     generationId: carGeneration,
     sortOrder,
   });

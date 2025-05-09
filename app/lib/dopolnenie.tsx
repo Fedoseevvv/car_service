@@ -1,21 +1,12 @@
 export const CAR_SORT_SEARCH_PARAM = "sort";
 import StorageTable from "../ui/index/table";
 import StorageFilters from "../ui/index/filters";
-import postgres from "postgres";
 import {
   fetchBrands,
   fetchModelsByBrand,
   fetchGenerationsByModel,
 } from "../lib/data";
 import { carBrands } from './placeholder-data';
-
-const sql = postgres(process.env.POSTGRES_URL!, {
-  ssl: 'require',
-  max: 1,
-  idle_timeout: 20,
-  connect_timeout: 10,
-  debug: process.env.NODE_ENV === 'development'
-});
 
 type Part = {
   id: string;
@@ -62,11 +53,9 @@ export default async function Page(props: {
 }
 
 export async function fetchParts({
-    modelId,
     generationId,
     sortOrder,
   }: {
-    modelId?: string | null;
     generationId?: string | null;
     sortOrder?: string | null;
   }): Promise<Part[]> {
@@ -91,16 +80,8 @@ export async function fetchParts({
         });
       }
 
-      console.log('Filtered parts:', filteredParts);
       return filteredParts;
     } catch (error) {
-      console.error('Error in fetchParts:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack
-        });
-      }
       return [];
     }
   }
