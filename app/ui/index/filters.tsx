@@ -10,6 +10,11 @@ import {
 } from "@/app/lib/constants";
 import { capitalize } from "@/app/lib/utils";
 
+const priceSortOptions = [
+  { value: "asc", label: "По возрастанию" },
+  { value: "desc", label: "По убыванию" },
+];
+
 export default function Filters({
   carModel,
   carBrand,
@@ -17,6 +22,7 @@ export default function Filters({
   brands,
   models,
   generations,
+  sortOrder,
 }: {
   carModel: string | null;
   carBrand: string | null;
@@ -29,6 +35,7 @@ export default function Filters({
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const currentSort = sortOrder;
 
   const params = new URLSearchParams(searchParams.toString());
 
