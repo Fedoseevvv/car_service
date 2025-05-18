@@ -81,12 +81,30 @@ function CartContent() {
         <div className="text-xl font-semibold text-gray-900">
           Итого: {totalPrice.toLocaleString('ru-RU')} ₽
         </div>
-        <button
-          onClick={() => router.push('/')}
-          className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-        >
-          Продолжить покупки
-        </button>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => router.push('/')}
+            className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          >
+            Продолжить покупки
+          </button>
+          <button
+            onClick={() => router.push('/repair')}
+            className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Записаться на ремонт
+          </button>
+          <button
+            onClick={() => {
+              // Здесь будет логика оформления заказа
+              alert('Заказ оформлен! Мы свяжемся с вами для подтверждения.');
+              clearCart();
+            }}
+            className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          >
+            Купить запчасти
+          </button>
+        </div>
       </div>
     </div>
   );
