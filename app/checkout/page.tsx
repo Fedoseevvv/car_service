@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../lib/cart-context';
 
@@ -16,6 +16,12 @@ export default function CheckoutPage() {
     deliveryMethod: 'courier', // 'courier' или 'pickup'
     paymentMethod: 'card', // 'card' или 'cash'
   });
+
+  // Добавляем отладочную информацию
+  useEffect(() => {
+    console.log('Cart items:', items);
+    console.log('Total price:', totalPrice);
+  }, [items, totalPrice]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
