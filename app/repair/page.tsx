@@ -30,12 +30,22 @@ export default function RepairPage() {
   };
 
   const formatPhoneNumber = (value: string) => {
+    // Удаляем все нецифровые символы
     const phoneNumber = value.replace(/\D/g, '');
+    
+    // Если номер пустой, возвращаем пустую строку
     if (phoneNumber.length === 0) return '';
-    if (phoneNumber.length <= 3) return `+7 (${phoneNumber}`;
-    if (phoneNumber.length <= 6) return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-    if (phoneNumber.length <= 8) return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
-    return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 8)}-${phoneNumber.slice(8, 10)}`;
+    
+    // Если номер начинается с 7 или 8, удаляем эту цифру
+    const cleanNumber = phoneNumber.startsWith('7') || phoneNumber.startsWith('8') 
+      ? phoneNumber.slice(1) 
+      : phoneNumber;
+
+    // Форматируем номер в зависимости от длины
+    if (cleanNumber.length <= 3) return `+7 (${cleanNumber}`;
+    if (cleanNumber.length <= 6) return `+7 (${cleanNumber.slice(0, 3)}) ${cleanNumber.slice(3)}`;
+    if (cleanNumber.length <= 8) return `+7 (${cleanNumber.slice(0, 3)}) ${cleanNumber.slice(3, 6)}-${cleanNumber.slice(6)}`;
+    return `+7 (${cleanNumber.slice(0, 3)}) ${cleanNumber.slice(3, 6)}-${cleanNumber.slice(6, 8)}-${cleanNumber.slice(8, 10)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
