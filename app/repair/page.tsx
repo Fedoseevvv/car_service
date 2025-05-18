@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputMask from 'react-input-mask';
 
 export default function RepairPage() {
   const router = useRouter();
@@ -30,6 +29,23 @@ export default function RepairPage() {
     }));
   };
 
+  const formatPhoneNumber = (value: string) => {
+    const phoneNumber = value.replace(/\D/g, '');
+    if (phoneNumber.length === 0) return '';
+    if (phoneNumber.length <= 3) return `+7 (${phoneNumber}`;
+    if (phoneNumber.length <= 6) return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    if (phoneNumber.length <= 8) return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
+    return `+7 (${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 8)}-${phoneNumber.slice(8, 10)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+    setFormData(prev => ({
+      ...prev,
+      phone: formattedValue
+    }));
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Запись на ремонт</h1>
@@ -54,24 +70,17 @@ export default function RepairPage() {
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
             Номер телефона
           </label>
-          <InputMask
-            mask="+7 (999) 999-99-99"
-            maskChar="_"
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            required
             value={formData.phone}
-            onChange={handleChange}
-          >
-            {(inputProps: any) => (
-              <input
-                {...inputProps}
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
-                placeholder="+7 (___) ___-__-__"
-              />
-            )}
-          </InputMask>
+            onChange={handlePhoneChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
+            placeholder="+7 (___) ___-__-__"
+            maxLength={18}
+          />
         </div>
 
         <div>
